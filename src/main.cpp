@@ -1,7 +1,7 @@
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 int main(int argc, const char** argv)
 {
-    std::cout << "first project" << std::endl;
+    SPDLOG_INFO("spdlog Test");
     return 0;
 }

@@ -1,5 +1,4 @@
-#include "common.h"
-#include "Shader.h"
+#include "Engine.h"
 
 void OnFrameBufferSizeChange(GLFWwindow* window, int width, int height)
 {
@@ -22,12 +21,6 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
       ::glfwSetWindowShouldClose(window, true);
 }
 
-void Render()
-{
-    glClearColor(0.1f, 0.2f, 0.3f, 0.f);
-    glClear(GL_COLOR_BUFFER_BIT);
-}
-
 int main(int argc, const char** argv)
 {
     SPDLOG_INFO("GLFW LIB START");
@@ -40,9 +33,9 @@ int main(int argc, const char** argv)
         return -1;
     }
 
-  ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  ::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    ::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // glfw 윈도우 생성, 실패하면 에러 출력후 종료
     SPDLOG_INFO("Create glfw window");
@@ -58,18 +51,21 @@ int main(int argc, const char** argv)
 
     // glad를 활용한 OpenGL 함수 로딩
     if (::gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == false) {
-        SPDLOG_ERROR("failed to initialize glad");
+        SPDLOG_ERROR("failed to Initialize glad");
         ::glfwTerminate();
         return -1;
     }
 
     const auto* glVersion = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-    SPDLOG_INFO("OpenGL context version: {}", glVersion);
+    SPDLOG_INFO("OpenGL Context Version: {}", glVersion);
 
-    auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
-    auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
-    SPDLOG_INFO("Vertext Shader Id : {}", vertexShader->GetShaderID());
-    SPDLOG_INFO("Fragment Shader Id : {}", fragmentShader->GetShaderID());
+    auto engine = Engine::CreateEngine();
+    if (engine == nullptr) 
+    {
+        SPDLOG_ERROR("Failed to Create Engine");
+        ::glfwTerminate();
+        return -1;
+    }
 
     ::OnFrameBufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     ::glfwSetFramebufferSizeCallback(window, OnFrameBufferSizeChange);
@@ -79,10 +75,12 @@ int main(int argc, const char** argv)
     SPDLOG_INFO("Start main loop");
     while (::glfwWindowShouldClose(window) == false) {
         ::glfwPollEvents();
-        ::Render();
+        engine->Render();
         ::glfwSwapBuffers(window);
     }
 
-    glfwTerminate();
+    engine.reset();
+    
+    ::glfwTerminate();
     return 0;
 }

@@ -1,5 +1,14 @@
 #include "Shader.h"
 
+Shader::~Shader()
+{
+    if(_shaderID)
+    {        
+        glDeleteShader(_shaderID);
+        _shaderID = 0;
+    }
+}
+
 bool Shader::LoadFromFile(const std::string &fileName, GLenum shaderType)
 {
     auto ret = LoadTextFromFile(fileName);
@@ -38,11 +47,3 @@ std::unique_ptr<Shader> Shader::CreateFromFile(const std::string &fileName, GLen
     return std::move(shader);
 }
 
-Shader::~Shader()
-{
-    if(_shaderID)
-    {        
-        glDeleteShader(_shaderID);
-        _shaderID = 0;
-    }
-}

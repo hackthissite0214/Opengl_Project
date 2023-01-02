@@ -7,7 +7,7 @@ std::optional<std::string> LoadTextFromFile(const std::string& fileName)
     std::ifstream file(fileName);
     if(file.is_open() == false)
     {
-        SPDLOG_ERROR("Failed to open file: {}", filename);
+        SPDLOG_ERROR("Failed to open file: {}", fileName);
         return {};
     }
 

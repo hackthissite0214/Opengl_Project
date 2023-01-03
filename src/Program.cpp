@@ -39,3 +39,8 @@ std::unique_ptr<Program> Program::CreateProgram(const std::vector<std::shared_pt
 
     return std::move(program);
 }
+
+void Program::Use()
+{
+    glUseProgram(_programID);
+}

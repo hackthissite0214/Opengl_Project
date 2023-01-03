@@ -20,6 +20,8 @@ add_executable(${PROJECT_NAME}
   src/shader.h  src/shader.cpp
   src/Program.h src/Program.cpp
   src/Engine.h  src/Engine.cpp
+  src/Buffer.h  src/Buffer.cpp
+  src/VertexLayout.h  src/VertexLayout.cpp
   )
 
 include(Dependency.cmake)

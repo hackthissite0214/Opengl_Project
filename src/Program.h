@@ -11,7 +11,8 @@ private:
 public:
     ~Program();
     static std::unique_ptr<Program> CreateProgram(const std::vector<std::shared_ptr<Shader>>& shaders);
-
+    void Use();
+    
 public:
     uint32_t GetProgramID() const { return _programID; }
 

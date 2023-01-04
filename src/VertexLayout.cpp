@@ -35,5 +35,5 @@ void VertexLayout::SetAttribute(uint32_t attributeIndex, int count, uint32_t typ
 
 void VertexLayout::RemoveAttribute(int attributeIndex)
 {
-    
+    glDisableVertexArrayAttrib(_vertexArrayObject, attributeIndex);
 }

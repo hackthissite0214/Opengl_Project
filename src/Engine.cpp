@@ -26,18 +26,26 @@ bool Engine::Initialize()
         -0.5f, 0.5f, 0.f
     };
 
+    float vertices4[] = {
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // top right, red
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right, green
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left, blue
+        -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, // top left, yellow
+    };
+
     uint32_t indices[] = {
         0, 1, 3,
         1, 2, 3
     };
 
-    _vertexArrayObject = VertexLayout::CreateVertexLayout();
+    _vertexLayout = VertexLayout::CreateVertexLayout();
  
-    _vertexBuffer = Buffer::CreateBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices3, sizeof(vertices3));
+    _vertexBuffer = Buffer::CreateBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices4, sizeof(vertices4));
 
     //  simple.vs -> layout (location = 0) in vec3 aPos; -> location 0 = VAO attribute 0 
-     _vertexArrayObject->SetAttribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
-     
+    _vertexLayout->SetAttribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+    _vertexLayout->SetAttribute(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, sizeof(float) * 3);
+
     _indexBuffer = Buffer::CreateBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(indices));
 
     std::shared_ptr<Shader> vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
@@ -55,6 +63,11 @@ bool Engine::Initialize()
         return false;
 
     SPDLOG_INFO("Program Id : {}", _program->GetProgramID());
+
+    //  fs -> uniform color
+    // auto uniformLocation = glGetUniformLocation(_program->GetProgramID(), "color");
+    // _program->Use();
+    // glUniform4f(uniformLocation, 0.f, 1.0f, 0.f, 1.0f);
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.f);
 
@@ -74,9 +87,17 @@ void Engine::Render()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    _program->Use();
+    // static float tick = 0.f;
+    // float value = ::sinf(tick) * 0.5f + 0.5f; // 0 ~ 1
+    // auto uniformLocation = glGetUniformLocation(_program->GetProgramID(), "color");
+    // _program->Use();
+    // glUniform4f(uniformLocation, value * value, 2.0f * value * (1.0f - value), (1.0f - value) * (1.0f - value), 1.0f);
+    // // glDrawArrays(GL_POINTS, 0, 1);
+    // // glDrawArrays(GL_TRIANGLES, 0, 6);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    // glDrawArrays(GL_POINTS, 0, 1);
-    // glDrawArrays(GL_TRIANGLES, 0, 6);
+    // tick += 0.016f;
+
+    _program->Use();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

@@ -21,4 +21,7 @@ private:
     std::unique_ptr<VertexLayout> _vertexLayout;
     std::unique_ptr<Buffer> _vertexBuffer;
     std::unique_ptr<Buffer> _indexBuffer;
+
+    //  TEMP : ;;
+    uint32_t _textureID = 0;
 };

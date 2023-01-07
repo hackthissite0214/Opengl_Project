@@ -15,13 +15,14 @@ project(
   )
   
 add_executable(${PROJECT_NAME} 
-                src/main.cpp
-  src/common.h  src/common.cpp
-  src/shader.h  src/shader.cpp
-  src/Program.h src/Program.cpp
-  src/Engine.h  src/Engine.cpp
-  src/Buffer.h  src/Buffer.cpp
+                      src/main.cpp
+  src/common.h        src/common.cpp
+  src/shader.h        src/shader.cpp
+  src/Program.h       src/Program.cpp
+  src/Engine.h        src/Engine.cpp
+  src/Buffer.h        src/Buffer.cpp
   src/VertexLayout.h  src/VertexLayout.cpp
+  src/Image.h         src/Image.cpp
   )
 
 include(Dependency.cmake)

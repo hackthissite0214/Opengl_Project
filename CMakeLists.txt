@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}
   src/Buffer.h        src/Buffer.cpp
   src/VertexLayout.h  src/VertexLayout.cpp
   src/Image.h         src/Image.cpp
+  src/Texture.h       src/Texture.cpp
   )
 
 include(Dependency.cmake)

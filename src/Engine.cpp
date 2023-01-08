@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Shader.h"
 #include "Image.h"
+#include "Texture.h"
 
 bool Engine::Initialize()
 {
@@ -93,48 +94,56 @@ bool Engine::Initialize()
 
     glClearColor(0.1f, 0.2f, 0.3f, 0.f);
 
-    //  Texture Binary Data -> CPU
+
+    // auto image = Image::CreateImage(512,512);
+    // image->SetCheckImage(16,16);
+    // if(image == nullptr)
+    //     return false;
+
+    // SPDLOG_INFO("Image : {}x{}, {} channels", image->GetWidth(), image->GetHeight(), image->GetChannel());
+
+    // Image Binary Data -> CPU
     auto image = Image::LoadImg("./image/container.jpg");
     if(image == nullptr)
         return false;
 
     SPDLOG_INFO("Image : {}x{}, {} channels", image->GetWidth(), image->GetHeight(), image->GetChannel());
 
+    _texture = Texture::CreateTextureFromImage(image.get());
+    if(_texture == nullptr)
+        return false;
 
-    //  GPU
-    //  Texture Object Generate
-    glGenTextures(1, &_textureID);
+    SPDLOG_INFO("Texture Id : {}", _texture->GetTextureID());
 
-    //  Bind 2D Texture Target -> _textureID
-    glBindTexture(GL_TEXTURE_2D, _textureID);
+    auto image2 = Image::LoadImg("./image/awesomeface.png");
+    if(image2 == nullptr)
+        return false;
 
-    //  축소 or 확대 Linear
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    SPDLOG_INFO("Image : {}x{}, {} channels", image2->GetWidth(), image2->GetHeight(), image2->GetChannel());
 
-    //  Textrue 좌표계 : S -> X , T -> Y 
-    //  X or Y 축의 Texture 좌표가 0보다작거나 1보다 클 경우
-    //  -> 제일 모서리의 컬러를 사용하는 Clamp
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    _texture2 = Texture::CreateTextureFromImage(image2.get());
+    if(_texture2 == nullptr)
+        return false;
 
-    //  Texture Size 2의 지수 효율
+    SPDLOG_INFO("Texture Id : {}", _texture2->GetTextureID());
 
-    //  Texture CPU -> GPU
-    //  Target -> GL_TEXTURE_2D -> _textureID
-    glTexImage2D(GL_TEXTURE_2D,
-        //  GPU Info
-        //  level -> Default Image Size
-        //  RGB -> Channel 변환 가능 어떤 채널을 사용할지 GPU에서의 Texture Channel Format
-        //  Image Size
-        //  Border Size
-     0, GL_RGB, image->GetWidth(), image->GetHeight(), 0, 
-        // CPU Info
-        // RGB -> 3 Channel Image
-        // Data -> Channel Type -> unsinged byte
-        // image Binary Data 
-     GL_RGB, GL_UNSIGNED_BYTE, image->GetData());
-    
+    //  Texture 0번 슬롯에 _texture Object Bind
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture->GetTextureID());
+
+    //  Texture 1번 슬롯에 _texture2 Object Bind
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, _texture2->GetTextureID());
+
+    _program->Use();
+
+    //  fs uniform sampler2D tex
+    //  0번 슬롯 Texture Use
+    glUniform1i(glGetUniformLocation(_program->GetProgramID(), "tex"), 0);
+    //  fs uniform sampler2D tex2
+    //  1번 슬롯 Texture Use
+    glUniform1i(glGetUniformLocation(_program->GetProgramID(), "tex2"), 1);
+
     return true;
 }
 
